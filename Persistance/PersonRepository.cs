@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.DTO;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ namespace Persistance
             Config = config;
         }
 
-        public async Task<List<Person>> CreatePerson(Person person)
+        public async Task<List<Person>> CreatePerson(PersonDTO person)
         {
             using var connection = new SqlConnection(Config.GetConnectionString("DefaultConnection"));
             var create = await connection.ExecuteAsync("insert into dbo.Person (FirstName,LastName,Age,PersonalNumber,Phone,City)values(@FirstName,@LastName,@Age,@PersonalNumber,@Phone,@City)", person);
