@@ -16,7 +16,7 @@ namespace Persistance
             Config = config;
         }
 
-        public async Task<List<Person>> CreatePerson(PersonDTO person)
+        public async Task<List<Person>> CreatePerson(CreatePersonDTO person)
         {
             using var connection = new SqlConnection(Config.GetConnectionString("DefaultConnection"));
             var create = await connection.ExecuteAsync("insert into dbo.Person (FirstName,LastName,Age,PersonalNumber,Phone,City)values(@FirstName,@LastName,@Age,@PersonalNumber,@Phone,@City)", person);
@@ -47,10 +47,10 @@ namespace Persistance
 
         }
 
-        public async Task<List<Person>> UpdatePerson(Person person)
+        public async Task<List<Person>> UpdatePerson(PersonDTO person)
         {
             using var connection = new SqlConnection(Config.GetConnectionString("DefaultConnection"));
-            var update = await connection.ExecuteAsync("update dbo.Person set FirstName=@FirstName, LastName=@LastName,Age=@Age,PersonalNumber=@PersonalNumber,City=@City,Phone=@Phone, Id=@Id", person);
+            var update = await connection.ExecuteAsync("update dbo.Person set FirstName=@FirstName, LastName=@LastName,Age=@Age,PersonalNumber=@PersonalNumber,City=@City,Phone=@Phone where Id=@Id", person);
 
             var persons = await SelectAllPersons(connection);
             return persons.ToList();
