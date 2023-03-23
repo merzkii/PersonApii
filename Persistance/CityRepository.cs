@@ -54,7 +54,7 @@ namespace Persistance
         public async Task<List<City>> UpdateCity(CityDto city)
         {
             using var connection = new SqlConnection(Config.GetConnectionString("DefaultConnection"));
-            var update = await connection.ExecuteAsync("update dbo.City set Name=@Name, Id=@Id where Id=@Id", city);
+            var update = await connection.ExecuteAsync("update dbo.City set Name=@Name where Id=@Id", city);
 
             var cities = await SelectAllCities(connection);
             return cities.ToList();

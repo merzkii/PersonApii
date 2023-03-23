@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.DTO;
 using Dapper;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PersonApi;
@@ -41,10 +42,20 @@ namespace Persistance
         public async Task<Person> GetPerson(int personiId)
         {
             using var connection = new SqlConnection(Config.GetConnectionString("DefaultConnection"));
-            var person = await connection.QueryFirstAsync<Person>("select * from dbo.Person where id=@Id",
-                new { Id = personiId });
-            return person;
+            
+                connection.Open();
 
+                var query = @"
+                SELECT p.*, c.* 
+                 FROM Person p 
+                JOIN City c ON p.CityId = c.Id 
+                WHERE p.Id = @Id";
+
+            var person = await connection.QueryAsync<Person, City, Person>(query, (person, city) => { person.City = city; return person; }, new { Id = personiId });
+                
+
+            return person.SingleOrDefault();
+            connection.Close();
         }
 
         public async Task<List<Person>> UpdatePerson(PersonDTO person)
